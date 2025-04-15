@@ -1,5 +1,84 @@
 ---
 title: "Tugas-DecisionTree"
 output: html_document
+author: "vincensius damar adyatma"
 ---
+
+
+```{r}
+library(party)
+library(caret)
+```
+
+```{r}
+getwd()
+```
+```{r}
+train_data = read.csv("./dataset/Iris.csv")
+train_data
+```
+
+```{r}
+train_data$Species = factor(train_data$Species)
+str(train_data)
+
+```
+```{r}
+formula <- Species ~ SepalLengthCm + SepalWidthCm + PetalLengthCm + PetalWidthCm
+```
+
+```{r}
+fit <- ctree(formula,data=train_data,controls=ctree_control(minsplit=2))
+fit
+```
+```{r}
+plot(fit)
+```
+
+```{r}
+table(predict(fit), train_data$Species)
+```
+
+```{r}
+set.seed(1234)
+ind <- sample(2, nrow(train_data), replace=T, prob = c(0.7, 0.3))
+iris.train <- train_data[ind==1, ]
+iris.test <- train_data[ind==2, ]
+```
+
+```{r}
+iris.test
+```
+
+```{r}
+prediksi <- predict(fit,newdata=iris.test)
+prediksi
+```
+
+```{r}
+table_mat <- table(iris.test$Species,prediksi)
+table_mat
+```
+```{r}
+confusionMatrix(table(iris.test$Species,prediksi))
+```
+
+```{r}
+#tuning parameter
+control <- ctree_control(minsplit=1, minbucket=round(4/3), maxdepth=3)
+```
+
+```{r}
+tune_fit <- ctree(Species~.,data=train_data,controls=control)
+tune_fit
+
+```
+```{r}
+prediksi <- predict(tune_fit,newdata=iris.test)
+prediksi
+```
+
+```{r}
+confusionMatrix(table(iris.test$Species,prediksi))
+```
 
