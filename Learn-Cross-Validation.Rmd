@@ -1,0 +1,44 @@
+---
+title: "Learn-Cross-Validation"
+output: html_document
+---
+
+```{r}
+library(caret)
+```
+```{r}
+getwd()
+```
+```{r}
+data = read.csv("./dataset/Iris.csv")
+data
+```
+```{r}
+index <- createDataPartition(data$Species, p = 0.7, list = FALSE)
+data.train <- data[index,]
+data.test <- data[-index,]
+```
+
+```{r}
+crossValidationControl = trainControl(method = 'cv',number = 10)
+```
+
+```{r}
+fit.cv <- train(Species ~ ., data = data.train, method = "ctree", trControl = crossValidationControl)
+
+
+fit.cv
+```
+```{r}
+pred <- predict(fit.cv, data.test)
+pred
+```
+```{r}
+confusionMatrix(table(data.test$Species,pred))
+```
+```{r}
+plot(fit.cv)
+```
+
+
+
