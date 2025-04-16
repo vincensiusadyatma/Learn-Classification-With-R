@@ -1,14 +1,10 @@
 ---
-title: "Tugas-DecisionTree"
+title: "Tugas-Naives-Bayes"
 output: html_document
 author: "vincensius damar adyatma"
 ---
 
-
 ```{r}
-#import package untuk melakukan klasifikasi dengan decision tree dengan evaluasi cross validation
-
-library(party)
 library(caret)
 ```
 
@@ -21,6 +17,7 @@ getwd()
 data = read.csv("./dataset/Iris.csv")
 data
 ```
+
 ```{r}
 #menghilangkan kolom/feature id
 
@@ -46,41 +43,27 @@ crossValidationControl = trainControl(method = 'cv',number = 10)
 ```
 
 ```{r}
-# Melatih model dengan cross validation dan algoritma decsion tree
-fit.cv <- train(Species ~ ., data = data.train, method = "ctree", trControl = crossValidationControl)
+# Melatih model dengan cross validation dan algoritma naive bayes
+fit.cv <- train(Species ~ ., data = data.train, method = "naive_bayes", trControl = crossValidationControl)
 
 
 fit.cv
 ```
 ```{r}
-# Mengakses & mengurutkan hasil eval per fold 
-fit.cv$resample <- fit.cv$resample[order(fit.cv$resample$Resample), ]
-fit.cv$resample
-```
-
-
-```{r}
 #menampilkan hasil pohon keputusan
 plot(fit.cv$finalModel)
 ```
-
 ```{r}
 #melakukan prediksi dengan data test
 pred <- predict(fit.cv, data.test)
 pred
 ```
-
 ```{r}
-
 # Membuat tabel confusion matrix dari actual vs predicted
 confusionMatrix(table(data.test$Species,pred))
 ```
-
 ```{r}
 #Menampilkan grafik akurasi corss validation
 plot(fit.cv)
 ```
-
-
-
 
