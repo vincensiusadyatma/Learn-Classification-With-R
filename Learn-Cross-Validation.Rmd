@@ -14,10 +14,17 @@ data = read.csv("./dataset/Iris.csv")
 data
 ```
 ```{r}
+data <- data[,-1]
+data
+```
+
+
+```{r}
 index <- createDataPartition(data$Species, p = 0.7, list = FALSE)
 data.train <- data[index,]
 data.test <- data[-index,]
 ```
+
 
 ```{r}
 crossValidationControl = trainControl(method = 'cv',number = 10)

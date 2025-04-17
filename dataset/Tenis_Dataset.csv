@@ -1,0 +1,15 @@
+Minggu;Ramalan_Cuaca;Suhu;Kelembapan;Angin;Bermain_Tenis
+M1;Cerah;Panas;Tinggi;Lemah;Tidak
+M2;Cerah;Panas;Tinggi;Kuat;Tidak
+M3;Mendung;Panas;Tinggi;Lemah;Ya
+M4;Hujan;Sejuk;Tinggi;Lemah;Ya
+M5;Hujan;Dingin;Normal;Lemah;Ya
+M6;Hujan;Dingin;Normal;Kuat;Tidak
+M7;Mendung;Dingin;Normal;Kuat;Ya
+M8;Cerah;Sejuk;Tinggi;Lemah;Tidak
+M9;Cerah;Dingin;Normal;Lemah;Ya
+M10;Hujan;Sejuk;Normal;Lemah;Ya
+M11;Cerah;Sejuk;Normal;Kuat;Ya
+M12;Mendung;Sejuk;Tinggi;Kuat;Ya
+M13;Mendung;Panas;Normal;Lemah;Ya
+M14;Hujan;Sejuk;Tinggi;Kuat;Tidak

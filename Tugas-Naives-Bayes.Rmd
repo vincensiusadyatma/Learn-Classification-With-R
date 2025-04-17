@@ -50,7 +50,7 @@ fit.cv <- train(Species ~ ., data = data.train, method = "naive_bayes", trContro
 fit.cv
 ```
 ```{r}
-#menampilkan hasil pohon keputusan
+#menampilkan hasil model 
 plot(fit.cv$finalModel)
 ```
 ```{r}

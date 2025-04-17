@@ -1,0 +1,22 @@
+---
+title: "Tenis_DecisionTree"
+output: html_document
+author: "vincensius damar adyatma"
+---
+```{r}
+
+library(party)
+library(caret)
+```
+
+```{r}
+getwd()
+```
+```{r}
+data = read.csv("./dataset/Tenis_Dataset.csv", sep = ";")
+data
+```
+```{r}
+
+```
+
