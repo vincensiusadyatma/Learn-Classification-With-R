@@ -1,0 +1,230 @@
+---
+title: "Tenis_RandomForest"
+output: html_document
+author: "vincensius damar adyatma"
+---
+
+```{r}
+library(randomForest)
+library(caret)
+```
+
+```{r}
+#menampilkan working directory yang aktif sekarang
+getwd()
+```
+```{r}
+#membaca dataset
+data = read.csv("./dataset/Tenis_Dataset.csv", sep = ";")
+data = data[2:6]
+data
+```
+
+```{r}
+#untuk menampilkan struktur data
+str(data)
+```
+```{r}
+# Mengubah kolom 1 sampai 5 pada data menjadi tipe faktor
+data[1:5] = lapply(data[1:5], factor)
+
+# Menampilkan struktur data setelah perubahan tipe kolom
+str(data)
+```
+```{r}
+# Membuat indeks partisi data untuk training (70%) dan testing (30%)
+index <- createDataPartition(data$Bermain_Tenis, p = 0.7, list = FALSE)
+
+# Membagi data menjadi data training berdasarkan indeks yang dibuat
+data.train <- data[index, ]
+
+# Membagi data menjadi data testing dengan mengambil sisa baris selain indeks training
+data.test <- data[-index, ]
+
+```
+
+
+
+```{r}
+# Membuat kontrol cross validation dengan jumlah folds 5
+crossValidationControl = trainControl(method = 'cv',number = 5, search = 'grid')
+```
+
+```{r}
+# Melatih model dengan cross validation dengan model random forest
+rf.cv <- train(Bermain_Tenis ~ ., data = data.train, method = "rf",metric = "Accuracy", trControl = crossValidationControl)
+
+rf.cv
+```
+
+```{r}
+#Membangun model random forest dapat dilakukan dengan memanggil fungsi randomforest
+rf.fit <- randomForest(data.train)
+print(rf.fit)
+```
+
+```{r}
+summary(rf.fit)
+```
+```{r}
+#mengukur seberapa penting setiap variabel prediktor (fitur) dalam model
+importance(rf.fit)
+```
+
+```{r}
+varImpPlot(rf.fit)
+```
+
+
+#Membuat fungsi akurasi
+```{r}
+tuneGrid <- expand.grid(.mtry = c(1:10))
+rf_mtry <- train(Bermain_Tenis~.,
+    data = data.train,
+    method = "rf",
+    metric = "Accuracy",
+    tuneGrid = tuneGrid,
+    trControl = crossValidationControl,
+    importance = TRUE,
+    nodesize = 14,
+    ntree = 300)
+```
+```{r}
+print(rf_mtry)
+```
+
+```{r}
+## menyimpan nilai mtry terbaik
+best_mtry <- rf_mtry$bestTune$mtry
+best_mtry
+```
+```{r}
+##Menyimpan dan menggunakan 
+max(rf_mtry$results$Accuracy)
+```
+
+
+```{r}
+store_maxnode <- list()
+tuneGrid <- expand.grid(.mtry = best_mtry)
+for (maxnodes in c(2: 5)) {
+    set.seed(1234)
+    rf_maxnode <- train(Bermain_Tenis~.,
+        data = data.train,
+        method = "rf",
+        metric = "Accuracy",
+        tuneGrid = tuneGrid,
+        trControl = crossValidationControl,
+        importance = TRUE,
+        nodesize = 14,
+        maxnodes = maxnodes,
+        ntree = 300)
+    current_iteration <- toString(maxnodes)
+    store_maxnode[[current_iteration]] <- rf_maxnode
+}
+```
+```{r}
+results_mtry <- resamples(store_maxnode)
+summary(results_mtry)
+```
+```{r}
+store_maxnode <- list()
+tuneGrid <- expand.grid(.mtry = best_mtry)
+for (maxnodes in c(5: 10)) {
+    set.seed(1234)
+    rf_maxnode <- train(Bermain_Tenis~.,
+        data = data.train,
+        method = "rf",
+        metric = "Accuracy",
+        tuneGrid = tuneGrid,
+        trControl = crossValidationControl,
+        importance = TRUE,
+        nodesize = 14,
+        maxnodes = maxnodes,
+        ntree = 300)
+    key <- toString(maxnodes)
+    store_maxnode[[key]] <- rf_maxnode
+}
+```
+
+
+```{r}
+results_mtry <- resamples(store_maxnode)
+summary(results_mtry)
+```
+
+Find the best of ntress
+```{r}
+store_maxtrees <- list()
+for (ntree in c(250, 300, 350, 400, 450, 500, 550, 600, 800, 1000, 2000)) {
+    set.seed(5678)
+    rf_maxtrees <- train(Bermain_Tenis~.,
+        data = data.train,
+        method = "rf",
+        metric = "Accuracy",
+        tuneGrid = tuneGrid,
+        trControl = crossValidationControl,
+        importance = TRUE,
+        nodesize = 14,
+        maxnodes = 4,
+        ntree = ntree)
+    key <- toString(ntree)
+    store_maxtrees[[key]] <- rf_maxtrees
+}
+```
+
+```{r}
+results_tree <- resamples(store_maxtrees)
+summary(results_tree)
+```
+```{r}
+fit_rf <- train(Bermain_Tenis~.,
+    data.train,
+    method = "rf",
+    metric = "Accuracy",
+    tuneGrid = tuneGrid,
+    trControl = crossValidationControl,
+    importance = TRUE,
+    nodesize = 14,
+    ntree = 550,
+    maxnodes = 14)
+```
+```{r}
+print(fit_rf)
+```
+```{r}
+plot(rf.cv)
+```
+```{r}
+varImp(rf.cv)
+```
+
+
+Evaluate the model
+
+```{r}
+prediksi <- predict(rf.cv,data.test)
+prediksi
+```
+```{r}
+confusionMatrix(table(data.test$Bermain_Tenis,prediksi))
+```
+```{r}
+varImpPlot(rf.fit)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,185 @@
+---
+title: "Tenis_NaivesBayes"
+output: html_document
+author: "vincensius damar adyatma"
+---
+```{r}
+#import package untuk melakukan klasifikasi dengan cross validation
+library(naivebayes)
+library(caret)
+library(ggplot2)
+
+```
+
+```{r}
+getwd()
+```
+```{r}
+#membaca data training 
+data = read.csv("./dataset/Tenis_Dataset.csv", sep = ";")
+data = data[2:6]
+data
+```
+
+```{r}
+# Mengubah kolom 1 sampai 5 pada data menjadi tipe faktor
+data[1:5] = lapply(data[1:5], factor)
+
+# Menampilkan struktur data setelah perubahan tipe kolom
+str(data)
+```
+```{r}
+#membaca data test
+data_test = read.csv("./dataset/Tenis_Test.csv", sep = ";")
+#menghilangkan kolom minggu
+data_test = data_test[2:6]
+data_test
+```
+
+```{r}
+# Mengubah kolom 1 sampai 5 pada data menjadi tipe faktor
+data_test[1:5] = lapply(data_test[1:5],factor)
+# Menampilkan struktur data setelah perubahan tipe kolom
+str(data_test)
+```
+
+```{r}
+# Membuat kontrol cross validation dengan jumlah folds 2
+crossValidationControl = trainControl(method = 'cv',number = 2)
+```
+
+```{r}
+# Melatih model dengan cross validation dan algoritma naive bayes
+fit.cv <- train(Bermain_Tenis ~ ., data = data, method = "naive_bayes", trControl = crossValidationControl)
+
+
+fit.cv
+```
+```{r}
+#menampilkan hasil model 
+plot(fit.cv$finalModel)
+```
+
+
+```{r}
+#melakukan prediksi dengan data test
+prediksi <- predict(fit.cv, newdata = data_test)
+prediksi
+```
+
+```{r}
+# Membuat tabel confusion matrix dari actual vs predicted
+confusionMatrix(table(data_test$Bermain_Tenis,prediksi))
+```
+```{r}
+#melakukan prediksi pada data x1
+x1 <- list(
+  Ramalan_Cuaca = factor("Cerah", levels = levels(data$Ramalan_Cuaca)),
+  Suhu = factor("Panas", levels = levels(data$Suhu)),
+  Kelembapan = factor("Tinggi", levels = levels(data$Kelembapan)),
+  Angin = factor("Lemah", levels = levels(data$Angin))
+)
+
+# Konversi vektor menjadi data frame sementara
+data_baru_df <- as.data.frame(x1)
+
+# Lakukan prediksi
+prediksi <- predict(fit.cv, newdata = data_baru_df)
+
+# Tampilkan hasil prediksi dalam format yang diinginkan
+hasil_prediksi <- paste(
+  "Ramalan Cuaca:", data_baru_df$Ramalan_Cuaca,
+  ", Suhu:", data_baru_df$Suhu,
+  ", Kelembapan:", data_baru_df$Kelembapan,
+  ", Angin:", data_baru_df$Angin,
+  "=> Prediksi: Bermain Tenis =>", prediksi
+)
+
+# Cetak hasil
+cat(hasil_prediksi, "\n")
+```
+```{r}
+#melakukan prediksi pada data x2
+x2 <- list(
+  Ramalan_Cuaca = factor("Cerah", levels = levels(data$Ramalan_Cuaca)),
+  Suhu = factor("Panas", levels = levels(data$Suhu)),
+  Kelembapan = factor("Normal", levels = levels(data$Kelembapan)),
+  Angin = factor("Lemah", levels = levels(data$Angin))
+)
+
+# Konversi vektor menjadi data frame sementara
+data_baru_df <- as.data.frame(x2)
+
+# Lakukan prediksi
+prediksi <- predict(fit.cv, newdata = data_baru_df)
+
+# Tampilkan hasil prediksi dalam format yang diinginkan
+hasil_prediksi <- paste(
+  "Ramalan Cuaca:", data_baru_df$Ramalan_Cuaca,
+  ", Suhu:", data_baru_df$Suhu,
+  ", Kelembapan:", data_baru_df$Kelembapan,
+  ", Angin:", data_baru_df$Angin,
+  "=> Prediksi: Bermain Tenis", prediksi
+)
+
+# Cetak hasil
+cat(hasil_prediksi, "\n")
+```
+```{r}
+#melakukan prediksi pada data x3
+
+x3 <- list(
+  Ramalan_Cuaca = factor("Cerah", levels = levels(data$Ramalan_Cuaca)),
+  Suhu = factor("Dingin", levels = levels(data$Suhu)),
+  Kelembapan = factor("Normal", levels = levels(data$Kelembapan)),
+  Angin = factor("Lemah", levels = levels(data$Angin))
+)
+
+# Konversi vektor menjadi data frame sementara
+data_baru_df <- as.data.frame(x3)
+
+# Lakukan prediksi
+prediksi <- predict(fit.cv, newdata = data_baru_df)
+
+# Tampilkan hasil prediksi dalam format yang diinginkan
+hasil_prediksi <- paste(
+  "Ramalan Cuaca:", data_baru_df$Ramalan_Cuaca,
+  ", Suhu:", data_baru_df$Suhu,
+  ", Kelembapan:", data_baru_df$Kelembapan,
+  ", Angin:", data_baru_df$Angin,
+  "=> Prediksi: Bermain Tenis =>", prediksi
+)
+
+# Cetak hasil
+cat(hasil_prediksi, "\n")
+```
+```{r}
+#melakukan prediksi pada data x4
+x4 <- list(
+  Ramalan_Cuaca = factor("Cerah", levels = levels(data$Ramalan_Cuaca)),
+  Suhu = factor("Sejuk", levels = levels(data$Suhu)),
+  Kelembapan = factor("Normal", levels = levels(data$Kelembapan)),
+  Angin = factor("Lemah", levels = levels(data$Angin))
+)
+
+# Konversi vektor menjadi data frame sementara
+data_baru_df <- as.data.frame(x4)
+
+# Lakukan prediksi
+prediksi <- predict(fit.cv, newdata = data_baru_df)
+
+# Tampilkan hasil prediksi dalam format yang diinginkan
+hasil_prediksi <- paste(
+  "Ramalan Cuaca:", data_baru_df$Ramalan_Cuaca,
+  ", Suhu:", data_baru_df$Suhu,
+  ", Kelembapan:", data_baru_df$Kelembapan,
+  ", Angin:", data_baru_df$Angin,
+  "=> Prediksi: Bermain Tenis =>", prediksi
+)
+
+# Cetak hasil
+cat(hasil_prediksi, "\n")
+```
+
+
+
